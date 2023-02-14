@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 import Loading from "../components/Loading";
 import ListingItem from "../components/listingItem";
 
-const Offers = () => {
+const Category = () => {
   const [listings, setListings] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -29,7 +29,7 @@ const Offers = () => {
         //create query
         const q = query(
           listingsRef,
-          where("offer", "==", true),
+          where("type", "==", params.categoryName),
           orderBy("timestamp", "desc"),
           limit(10)
         );
@@ -50,12 +50,14 @@ const Offers = () => {
       }
     };
     fetchListing();
-  }, []);
+  }, [params.categoryName]);
 
   return (
     <div className="category">
       <header>
-        <p className="pageHeader">Offers</p>
+        <p className="pageHeader">
+          {params.categoryName === "rent" ? "Place for rent" : "Place for sell"}
+        </p>
       </header>
       {loading ? (
         <Loading />
@@ -74,10 +76,10 @@ const Offers = () => {
           </main>
         </>
       ) : (
-        <p>There are not offers for the moment</p>
+        <p>No listings for {params.categoryName}</p>
       )}
     </div>
   );
 };
 
-export default Offers;
+export default Category;
