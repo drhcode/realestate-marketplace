@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom";
-import { ReactComponent as DeleteIcon } from "../assets/svg/deleteIcon.svg";
-import bedIcon from "../assets/svg/bedIcon.svg";
-import bathtubIcon from "../assets/svg/bathtubIcon.svg";
+import { Link } from 'react-router-dom'
+import { ReactComponent as DeleteIcon } from '../assets/svg/deleteIcon.svg'
+import bedIcon from '../assets/svg/bedIcon.svg'
+import bathtubIcon from '../assets/svg/bathtubIcon.svg'
 
 const ListingItem = ({ listing, id, onDelete }) => {
   return (
@@ -12,7 +12,7 @@ const ListingItem = ({ listing, id, onDelete }) => {
           className="categoryListingLink"
         >
           <img
-            src={listing.imageUrls[0]}
+            src={listing.imgUrls[0]}
             alt={listing.name}
             className="categoryListingImg"
           />
@@ -23,24 +23,24 @@ const ListingItem = ({ listing, id, onDelete }) => {
               {listing.offer
                 ? listing.discountedPrice
                     .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                 : listing.regularPrice
                     .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-              {listing.type === "rent" && " / Month"}
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              {listing.type === 'rent' && ' / Month'}
             </p>
             <div className="categoryListingInfoDiv">
               <img src={bedIcon} alt="bed" />
               <p className="categoryListingInfoText">
                 {listing.bedrooms > 1
                   ? `${listing.bedrooms} Bedrooms`
-                  : "1 Bedroom"}
+                  : '1 Bedroom'}
               </p>
               <img src={bathtubIcon} alt="bath" />
               <p className="categoryListingInfoText">
                 {listing.bathrooms > 1
                   ? `${listing.bathrooms} Bathrooms`
-                  : "1 Bathroom"}
+                  : '1 Bathroom'}
               </p>
             </div>
           </div>
@@ -54,7 +54,7 @@ const ListingItem = ({ listing, id, onDelete }) => {
         )}
       </li>
     </>
-  );
-};
+  )
+}
 
-export default ListingItem;
+export default ListingItem
