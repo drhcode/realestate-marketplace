@@ -169,7 +169,7 @@ const CreateListing = () => {
     // save to database
     const docRef = await addDoc(collection(db, 'listings'), formDataCopy)
     setLoading(false)
-    toast.success('Listing created successfully')
+    toast.success('Listing saved')
     navigate(`/category/${formDataCopy.type}/${docRef.id}`)
   }
 
@@ -217,7 +217,7 @@ const CreateListing = () => {
           <div className="formButtons">
             <button
               type="button"
-              className={type === 'sale' ? 'formActive' : 'formButton'}
+              className={type === 'sale' ? 'formButtonActive' : 'formButton'}
               id="type"
               value="sale"
               onClick={onMutate}
@@ -226,9 +226,9 @@ const CreateListing = () => {
             </button>
             <button
               type="button"
-              className={type === 'rent' ? 'formActive' : 'formButton'}
+              className={type === 'rent' ? 'formButtonActive' : 'formButton'}
               id="type"
-              value="sale"
+              value="rent"
               onClick={onMutate}
             >
               Rent

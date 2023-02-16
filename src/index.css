@@ -23,7 +23,6 @@ a {
 button {
   outline: none;
   border: none;
-  cursor: pointer;
 }
 
 .input,
@@ -79,6 +78,7 @@ button {
   top: -3%;
   right: -2%;
 }
+
 .editIcon {
   cursor: pointer;
   position: absolute;
@@ -116,6 +116,10 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.pageContainer {
+  margin-bottom: 10rem;
 }
 
 .loadingSpinner {
@@ -302,7 +306,7 @@ button {
     margin-bottom: 10rem;
   }
 }
-@media (max-height: 536) {
+@media (max-height: 536px) {
   .explore {
     margin-bottom: 10rem;
   }

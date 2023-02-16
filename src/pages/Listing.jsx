@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
+import SwiperCore, { Navigation, Pagination, Scrollbar, A11y } from 'swiper'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/swiper-bundle.css'
 import { getDoc, doc } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 import { db } from '../firebase.config'
 import Loading from '../components/Loading'
 import shareIcon from '../assets/svg/shareIcon.svg'
+SwiperCore.use([Navigation, Pagination, Scrollbar, A11y])
 
 const Listing = () => {
   const [listing, setListing] = useState(null)
@@ -21,7 +26,6 @@ const Listing = () => {
       const docSnap = await getDoc(docRef)
 
       if (docSnap.exists()) {
-        console.log(docSnap.data())
         setListing(docSnap.data())
         setLoading(false)
       }
@@ -34,8 +38,28 @@ const Listing = () => {
   }
   return (
     <main>
-      {/* SLIDER */}
+      {/* Slider Images */}
+      <Swiper slidesPerView={1} pagination={{ clickable: true }}>
+        {listing.imgUrls.map((url, index) => (
+          <SwiperSlide key={index}>
+            <div
+            // style={{
+            //   background: `url(${listing.imgUrls[index]}) center no-repeat`,
+            //   backgroundSize: 'cover',
+            // }}
+            // className="swiperSlideDiv"
+            >
+              <img
+                src={listing.imgUrls[index]}
+                className="swiperSlideDiv"
+                alt="images"
+              />
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
 
+      {/* Share Icon */}
       <div
         className="shareIconDiv"
         onClick={() => {
@@ -49,7 +73,7 @@ const Listing = () => {
         <img src={shareIcon} alt="sahre" />
       </div>
       {shareLinkCopied && <p className="linkCopied">Link Copied</p>}
-
+      {/* Listing details */}
       <div className="listingDetails">
         <p className="listingName">
           {listing.name} - €
@@ -85,12 +109,30 @@ const Listing = () => {
           <li>{listing.parking && 'Parking spot'}</li>
           <li>{listing.furnished && 'Furnished'}</li>
           <p className="listingLocationTitle">Location</p>
-          {/* MAP */}
+          <div className="leafletContainer">
+            {/* Map Container */}
+            <MapContainer
+              style={{ height: '100%', width: '100%' }}
+              center={[listing.geolocation.lat, listing.geolocation.lng]}
+              scrollWheelZoom={false}
+              zoom={14}
+            >
+              <TileLayer
+                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
+              />
+              <Marker
+                position={[listing.geolocation.lat, listing.geolocation.lng]}
+              >
+                <Popup>{listing.location}</Popup>
+              </Marker>
+            </MapContainer>
+          </div>
         </ul>
 
         {auth.currentUser?.uid !== listing.userRef && (
           <Link
-            to={`/contact/${listing.userRef}?listingName=${listing.name}&listingLocation=${listing.location}`}
+            to={`/contact/${listing.userRef}?listingName=${listing.name}`}
             className="primaryButton"
           >
             Contact Landlord
