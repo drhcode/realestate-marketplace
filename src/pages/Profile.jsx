@@ -11,7 +11,6 @@ import {
   updateDoc,
   deleteDoc,
 } from 'firebase/firestore'
-import { toast } from 'react-toastify'
 import { db } from './../firebase.config'
 import swal from 'sweetalert'
 import arrowRight from '../assets/svg/keyboardArrowRightIcon.svg'
@@ -78,7 +77,10 @@ const Profile = () => {
         })
       }
     } catch (error) {
-      toast.error('cannot update profile')
+      swal({
+        title: 'cannot update profile',
+        icon: 'warning',
+      })
     }
   }
 
@@ -88,6 +90,8 @@ const Profile = () => {
       [e.target.id]: e.target.value,
     }))
   }
+
+  const onEdit = (listingId) => navigate(`/edit-listing/${listingId}`)
 
   const onDelete = (listingId) => {
     swal({
@@ -174,6 +178,7 @@ const Profile = () => {
                   listing={listing.data}
                   id={listing.id}
                   onDelete={() => onDelete(listing.id)}
+                  onEdit={() => onEdit(listing.id)}
                 />
               ))}
             </ul>

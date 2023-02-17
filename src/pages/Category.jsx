@@ -10,7 +10,8 @@ import {
   startAfter,
 } from 'firebase/firestore'
 import { db } from '../firebase.config'
-import { toast } from 'react-toastify'
+import swal from 'sweetalert'
+
 import Loading from '../components/Loading'
 import ListingItem from '../components/listingItem'
 
@@ -51,7 +52,10 @@ const Category = () => {
         setListings(listings)
         setLoading(false)
       } catch (error) {
-        toast.error('Cannot get listing due to an error on server')
+        swal({
+          title: 'Cannot get listing due to an error on server',
+          icon: 'warning',
+        })
       }
     }
     fetchListing()
@@ -88,7 +92,10 @@ const Category = () => {
       setListings((prevState) => [...prevState, ...listings])
       setLoading(false)
     } catch (error) {
-      toast.error('Cannot get listing due to an error on server')
+      swal({
+        title: 'Cannot get listing due to an error on server',
+        icon: 'warning',
+      })
     }
   }
 

@@ -6,16 +6,18 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from 'firebase/storage'
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
-import { useNavigate } from 'react-router-dom'
+import { doc, updateDoc, getDoc, serverTimestamp } from 'firebase/firestore'
+import { useNavigate, useParams } from 'react-router-dom'
 import Loading from '../components/Loading'
+import swal from 'sweetalert'
+
 import { db } from '../firebase.config'
 import { v4 as uuidv4 } from 'uuid'
 
-const CreateListing = () => {
-  // eslint-disable-next-line
+const EditListing = () => {
   const [geolocationEnabled, setGeolocationEnabled] = useState(true)
   const [loading, setLoading] = useState(false)
+  const [listing, setListing] = useState(false)
   const [formData, setFormData] = useState({
     type: 'rent',
     name: '',
@@ -46,10 +48,52 @@ const CreateListing = () => {
     latitude,
     longitude,
   } = formData
+
   const auth = getAuth()
   const navigate = useNavigate()
+  const params = useParams()
   const isMounted = useRef(true)
 
+  const GeoAPI = 'AIzaSyDkO7MHn2ZgyiSXr4GpZs6RYypKekKn6EM'
+  const GoogleMapsAPI = 'https://maps.googleapis.com/maps/api/geocode/json'
+
+  // redirect if listing is not to this user
+
+  useEffect(() => {
+    if (listing && listing.userRef !== auth.currentUser.uid) {
+      swal({
+        title: 'Error',
+        text: 'You can not edit this listing!',
+        icon: 'warning',
+        buttons: true,
+        dangerMode: true,
+      })
+    }
+  })
+
+  // fetch listing to edit
+  useEffect(() => {
+    setLoading(true)
+    const fetchListing = async () => {
+      const docRef = doc(db, 'listings', params.listingId)
+      const docSnap = await getDoc(docRef)
+
+      if (docSnap.exists()) {
+        setListing(docSnap.data())
+        setFormData({ ...docSnap.data(), address: docSnap.data().location })
+        setLoading(false)
+      } else {
+        navigate('/')
+        swal({
+          title: 'Listing does not exist',
+          icon: 'warning',
+        })
+      }
+    }
+    fetchListing()
+  }, [params.listingId, navigate])
+
+  //set userRef to logged user
   useEffect(() => {
     if (isMounted) {
       onAuthStateChanged(auth, (user) => {
@@ -70,10 +114,7 @@ const CreateListing = () => {
     setLoading(true)
     if (discountedPrice >= regularPrice) {
       setLoading(false)
-      swal({
-        title: 'Discounted price should be less than regular price',
-        icon: 'warning',
-      })
+      swal('Discounted price should be less than regular price')
       return
     }
 
@@ -91,9 +132,7 @@ const CreateListing = () => {
 
     if (geolocationEnabled) {
       const response = await fetch(
-        `${import.meta.env.REACT_APP_GOOGLE_API_URL}?address=${address}&key=${
-          import.meta.env.REACT_APP_GEOCODE_API_KEY
-        }`
+        `${GoogleMapsAPI}?address=${address}&key=${GeoAPI}`
       )
       const data = await response.json()
       console.log(data)
@@ -108,10 +147,7 @@ const CreateListing = () => {
 
       if (location === undefined || location.includes('undefined')) {
         setLoading(false)
-        swal({
-          title: 'Invalid location',
-          icon: 'warning',
-        })
+        swal('Invalid location')
         return
       }
     } else {
@@ -136,10 +172,8 @@ const CreateListing = () => {
             console.log('Upload is ' + progress + '% done')
             switch (snapshot.state) {
               case 'paused':
-                console.log('Upload is paused')
                 break
               case 'running':
-                console.log('Upload is running')
                 break
             }
           },
@@ -160,8 +194,8 @@ const CreateListing = () => {
     ).catch(() => {
       setLoading(false)
       swal({
-        title: 'Images not uploaded',
-        icon: 'warning',
+        title: 'images not uploaded',
+        icon: 'error',
       })
       return
     })
@@ -179,14 +213,13 @@ const CreateListing = () => {
     delete formDataCopy.address
     !formDataCopy.offer && delete formDataCopy.discountedPrice
 
-    // save to database
-    const docRef = await addDoc(collection(db, 'listings'), formDataCopy)
+    // update listing
+    const docRef = doc(db, 'listings', params.listingId)
+    await updateDoc(docRef, formDataCopy)
     setLoading(false)
     swal({
-      title: 'Good job!',
-      text: 'Listings saved successfully',
+      title: 'Listing Updated Successfully',
       icon: 'success',
-      button: 'Ok',
     })
     navigate(`/category/${formDataCopy.type}/${docRef.id}`)
   }
@@ -225,7 +258,7 @@ const CreateListing = () => {
   return (
     <div className="profile">
       <header>
-        <p className="pageHeader">Create Listing</p>
+        <p className="pageHeader">Edit Listing</p>
       </header>
       <main>
         <form onSubmit={handleSubmit}>
@@ -451,7 +484,7 @@ const CreateListing = () => {
             required
           />
           <button type="submit" className="primaryButton createListingButton">
-            Create Listing
+            Edit Listing
           </button>
         </form>
       </main>
@@ -459,4 +492,4 @@ const CreateListing = () => {
   )
 }
 
-export default CreateListing
+export default EditListing
