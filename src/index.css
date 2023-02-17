@@ -12,6 +12,9 @@ body {
   background-color: #f2f4f8;
   margin: 0;
   box-sizing: border-box;
+  /* width: 100%;
+  display: flex;
+  justify-content: center; */
 }
 
 a {
@@ -468,6 +471,11 @@ button {
   max-width: 275px;
 }
 
+/* .parkingIcon {
+  width: 20px;
+  height: 20px;
+} */
+
 .categoryListingInfoText {
   font-weight: 500;
   font-size: 0.7rem;
@@ -478,13 +486,19 @@ button {
   width: 8rem;
   margin: 0 auto;
   text-align: center;
-  padding: 0.25rem 0.5rem;
+  padding: 0.5rem 0.5rem;
   background-color: #000000;
-  color: #ffffff;
+  color: white;
   font-weight: 600;
   border-radius: 1rem;
   opacity: 0.7;
   margin-top: 2rem;
+}
+
+.loadMore:hover {
+  background-color: #00cc66;
+  transition: 0.3s;
+  color: black;
 }
 
 .listingDetails {
