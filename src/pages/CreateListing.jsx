@@ -50,6 +50,8 @@ const CreateListing = () => {
   const navigate = useNavigate()
   const isMounted = useRef(true)
 
+  const apiKey = import.meta.env.VITE_GEO_API_KEY
+
   useEffect(() => {
     if (isMounted) {
       onAuthStateChanged(auth, (user) => {
@@ -91,9 +93,7 @@ const CreateListing = () => {
 
     if (geolocationEnabled) {
       const response = await fetch(
-        `${import.meta.env.REACT_APP_GOOGLE_API_URL}?address=${address}&key=${
-          import.meta.env.REACT_APP_GEOCODE_API_KEY
-        }`
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${apiKey}`
       )
       const data = await response.json()
       console.log(data)
@@ -166,7 +166,7 @@ const CreateListing = () => {
       return
     })
 
-    // object that will be submited to database
+    // object that will be stored to database
     const formDataCopy = {
       ...formData,
       imgUrls,
